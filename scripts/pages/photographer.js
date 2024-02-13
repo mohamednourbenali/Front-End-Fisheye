@@ -65,3 +65,16 @@
         }
     }
     displayWork(photos);
+
+    // Affichage de l'encart 
+    let nbrlikes = 0;
+    for (let i=0;i<searchPhotos.length;i++){
+        nbrlikes += parseInt(searchPhotos[i].likes)
+    }
+    let sticker = document.querySelector(".sticker");
+        sticker.innerHTML+="";
+        sticker.innerHTML+= `<div class="content">
+                                <p>${nbrlikes}<i class="fa-solid fa-heart"></i></p>
+                                <p>${searchPhotographer.price}€/jour</p>           
+                            </div>`
+        ;
