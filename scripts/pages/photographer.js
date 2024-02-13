@@ -68,13 +68,66 @@
 
     // Affichage de l'encart 
     let nbrlikes = 0;
-    for (let i=0;i<searchPhotos.length;i++){
-        nbrlikes += parseInt(searchPhotos[i].likes)
+    for (let i=0;i<photos.length;i++){
+        nbrlikes += parseInt(photos[i].likes)
     }
     let sticker = document.querySelector(".sticker");
-        sticker.innerHTML+="";
-        sticker.innerHTML+= `<div class="content">
-                                <p>${nbrlikes}<i class="fa-solid fa-heart"></i></p>
-                                <p>${searchPhotographer.price}€/jour</p>           
-                            </div>`
-        ;
+    sticker.innerHTML+="";
+    sticker.innerHTML+= `<div class="content">
+                            <p>${nbrlikes}<i class="fa-solid fa-heart"></i></p>
+                            <p>${searchPhotographer.price}€/jour</p>           
+                        </div>`
+    ;
+
+    // affichage du LightBox
+    const photoClick = document.querySelectorAll(".portrait");
+    photoClick.forEach(event => event.addEventListener("click",function(){
+        const modalPhoto = document.querySelector(".modal-photo");
+        modalPhoto.style.display="flex";
+        let indexPhoto = indexOfElement(photos,event.querySelector(".title").innerHTML);
+        afficherModalPhoto(photos[indexPhoto].image,photos[indexPhoto].title,indexPhoto);
+        const prev = document.querySelector(".prev");
+        prev.addEventListener("click",function(){
+            if((indexPhoto-1)<0){
+                indexPhoto = photos.length;
+            }else{
+                indexPhoto--;
+            }
+            afficherModalPhoto(photos[indexPhoto].image,photos[indexPhoto].title,indexPhoto);
+        });
+        const next = document.querySelector(".next");
+        next.addEventListener("click",function(){
+            if((indexPhoto+1)>photos.length){
+                indexPhoto=0;
+            }else{
+                indexPhoto++;
+            }
+            afficherModalPhoto(photos[indexPhoto].image,photos[indexPhoto].title,indexPhoto);
+        });
+        document.querySelector(".close").addEventListener("click",function(){
+            document.querySelector(".modal-photo").style.display="none";
+        });
+    }));
+    
+    // trouver l'indice d'un élément dans une liste 
+    function indexOfElement (liste,element){
+        let index = 0;
+        while((index<liste.length)&&(liste[index].title!==element)){
+            index++;
+        }
+        return index;
+    }
+
+    // afficher le lightbox d'une image passer en paramétres
+    function afficherModalPhoto (src,title,index){
+        const container = document.querySelector(".container");
+        if (photos[index].image==undefined){
+            container.innerHTML=`
+            <video controls>
+                <source src="${src}" type="video/mp4 />
+            </video>`
+        }else{
+            container.innerHTML=`<img src="${src}"/>`;
+        }
+        container.innerHTML+=`<p>${title}`;
+    }
