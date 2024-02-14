@@ -82,6 +82,7 @@
     // affichage du LightBox
     const photoClick = document.querySelectorAll(".portrait");
     photoClick.forEach(event => event.addEventListener("click",function(){
+        console.log("click");
         const modalPhoto = document.querySelector(".modal-photo");
         modalPhoto.style.display="flex";
         let indexPhoto = indexOfElement(photos,event.querySelector(".title").innerHTML);
@@ -130,4 +131,73 @@
             container.innerHTML=`<img src="${src}"/>`;
         }
         container.innerHTML+=`<p>${title}`;
+    }
+
+    // Trier les portraits 
+    document.querySelector('.select-wrapper').addEventListener('click', function() {
+        this.querySelector('.select').classList.toggle('open');
+    })
+    
+    for (const option of document.querySelectorAll(".custom-option")) {
+        option.addEventListener('click', function() {
+            if (!this.classList.contains('selected')) {
+                this.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+                this.classList.add('selected');
+                this.closest('.select').querySelector('.select__trigger span').textContent = this.textContent;
+            }
+            tri(option.innerText);
+        });
+    }
+
+    // trier les photos selon
+    function tri (chaine){
+        switch(chaine){
+            case "Popularité" :{
+                displayWork(trierPopulaire(photos));
+                break;
+            }case "Date" : {
+                displayWork(triDate(photos));
+                break;
+            }case "Titre" : {
+                displayWork(triTitre(photos));
+                break;
+            }    
+        }
+    }
+
+    // trier une liste selon la popularité
+    function trierPopulaire (liste) {
+        return liste.sort(function(a,b){
+            return a.likes-b.likes;
+        });
+    }
+
+    // trier une liste selon le titre
+    function triTitre (liste) {
+        return liste.sort (function(a,b){
+            return comapreByTitle(a,b);
+        });
+    }
+
+    // trier une liste selon la date
+    function triDate (liste) {
+        return liste.sort(function(a,b){
+            return comapreByDate(a,b);
+        });
+    }
+    
+    // comparer deux chaine 
+    function comapreByTitle (a,b) {
+        const titreA = a.title.toUpperCase();
+        const titreB = b.title.toUpperCase();
+        if (titreA < titreB) { return -1}
+        if (titreA > titreB) { return 1}
+        return 0;
+    }
+    
+    // comparer seux dates 
+    function comapreByDate (a,b) {
+        if (a.date < b.date) { return -1}
+        if (a.date > b.date) { return 1}
+        return 0;
     }
