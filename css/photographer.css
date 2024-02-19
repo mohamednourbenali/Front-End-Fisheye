@@ -42,6 +42,7 @@
     display: flex;
     align-items: center;
     margin-left: 100px;
+    margin-top: 50px;
 }
 .liste-tri{
     margin-left: 10px;
@@ -89,6 +90,11 @@
     width: 100%;
     height: 100%;    
     object-fit: cover;
+}
+.portrait video{
+    width: 100%;
+    height: 110%;
+    margin-top: -28%; 
 }
 .container p{
     color: #901C1C;
@@ -155,7 +161,6 @@
     margin-left: 1000px;
     margin-right: 0px;
     background-color: #DB8876;
-    ;
 }
 .content{
     display: flex;
@@ -319,4 +324,8 @@ hr{
  background-color : #fff;
  height : 0.5px;
  width : 150px;
+}
+
+.dislike{
+    cursor: pointer;
 }

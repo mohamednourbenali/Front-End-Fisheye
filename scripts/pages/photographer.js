@@ -38,14 +38,16 @@
             if(liste[i].image==undefined){
                 photographerWork.innerHTML+=`
                 <div class="portrait">
-                    <video controls style="width : 100%"; height:100%;">
-                        <source src="${liste[i].video}" type="video/mp4">
+                    <video controls>
+                        <source src="${liste[i].video}" class="hover-shadow" type="video/mp4">
                     </video>
                     <div class="description-likes">
                         <p class="title">${liste[i].title}</p>
                         <div class="like">
-                            <p>${liste[i].likes}</p>
-                            <i class="fa-solid fa-heart"></i>
+                            <p class="nbrLikes">${liste[i].likes}</p>
+                            <div class="heart">
+                                <i class="fa-regular fa-heart dislike"></i>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -56,13 +58,17 @@
                     <div class="description-likes">
                         <p class="title">${liste[i].title}</p>
                         <div class="like">
-                            <p>${liste[i].likes}</p>
-                            <i class="fa-solid fa-heart"></i>
+                            <p class="nbrLikes">${liste[i].likes}</p>
+                            <div class="heart">
+                                <i class="fa-regular fa-heart dislike"></i>
+                            </div>
                         </div>
                     </div>
                 </div>`;
             }
         }
+        clickPhoto();
+        manageLikes();
     }
     displayWork(photos);
 
@@ -80,36 +86,40 @@
     ;
 
     // affichage du LightBox
-    const photoClick = document.querySelectorAll(".portrait");
-    photoClick.forEach(event => event.addEventListener("click",function(){
-        console.log("click");
-        const modalPhoto = document.querySelector(".modal-photo");
-        modalPhoto.style.display="flex";
-        let indexPhoto = indexOfElement(photos,event.querySelector(".title").innerHTML);
-        afficherModalPhoto(photos[indexPhoto].image,photos[indexPhoto].title,indexPhoto);
-        const prev = document.querySelector(".prev");
-        prev.addEventListener("click",function(){
-            if((indexPhoto-1)<0){
-                indexPhoto = photos.length;
-            }else{
-                indexPhoto--;
-            }
-            afficherModalPhoto(photos[indexPhoto].image,photos[indexPhoto].title,indexPhoto);
-        });
-        const next = document.querySelector(".next");
-        next.addEventListener("click",function(){
-            if((indexPhoto+1)>photos.length){
-                indexPhoto=0;
-            }else{
-                indexPhoto++;
-            }
-            afficherModalPhoto(photos[indexPhoto].image,photos[indexPhoto].title,indexPhoto);
-        });
-        document.querySelector(".close").addEventListener("click",function(){
-            document.querySelector(".modal-photo").style.display="none";
-        });
-    }));
-    
+    function clickPhoto (){
+        const photoClick = document.querySelectorAll(".hover-shadow");
+        photoClick.forEach(event => event.addEventListener("click",function(){
+            const modalPhoto = document.querySelector(".modal-photo");
+            modalPhoto.style.display="flex";
+            let indexPhoto = indexOfElement(photos,event.parentElement.querySelector(".title").innerHTML);
+            afficherModalPhoto(indexPhoto);
+            const prev = document.querySelector(".prev");
+            prev.addEventListener("click",function(){indexPhoto = previousSlide(indexPhoto);});
+            const next = document.querySelector(".next");
+            next.addEventListener("click",function(){indexPhoto = nextSlide(indexPhoto);});
+            document.querySelector(".close").addEventListener("click",closeLightBox );
+        }));
+    }
+    // photo précédente 
+    function previousSlide (index){
+        if((index-1)<0){
+            index = photos.length-1; 
+        }else{
+            index--;
+        }
+        afficherModalPhoto(index);
+        return index;
+    }
+    // photo sivante 
+    function nextSlide (index){
+        if((index+1)>=photos.length){
+            index=0;
+        }else{
+            index++;
+        }
+        afficherModalPhoto(index);
+        return index;
+    }
     // trouver l'indice d'un élément dans une liste 
     function indexOfElement (liste,element){
         let index = 0;
@@ -120,17 +130,21 @@
     }
 
     // afficher le lightbox d'une image passer en paramétres
-    function afficherModalPhoto (src,title,index){
+    function afficherModalPhoto (index){
         const container = document.querySelector(".container");
-        if (photos[index].image==undefined){
+        if((photos[index].image)==undefined){
             container.innerHTML=`
             <video controls>
-                <source src="${src}" type="video/mp4 />
-            </video>`
+                <source src="${photos[index].video}" type="video/mp4" />
+            </video>`;
         }else{
-            container.innerHTML=`<img src="${src}"/>`;
+            container.innerHTML=`<img src="${photos[index].image}"/>`;
         }
-        container.innerHTML+=`<p>${title}`;
+        container.innerHTML+=`<p>${photos[index].title}</p>`;
+    }
+    // fermer le lightbox
+    function closeLightBox (){
+        document.querySelector(".modal-photo").style.display="none";
     }
 
     // Trier les portraits 
@@ -151,15 +165,19 @@
 
     // trier les photos selon
     function tri (chaine){
+        let liste = photos;
         switch(chaine){
             case "Popularité" :{
-                displayWork(trierPopulaire(photos));
+                displayWork(trierPopulaire(liste));
+                clickPhoto();
                 break;
             }case "Date" : {
-                displayWork(triDate(photos));
+                displayWork(triDate(liste));
+                clickPhoto();
                 break;
             }case "Titre" : {
-                displayWork(triTitre(photos));
+                displayWork(triTitre(liste));
+                clickPhoto();
                 break;
             }    
         }
@@ -200,4 +218,22 @@
         if (a.date < b.date) { return -1}
         if (a.date > b.date) { return 1}
         return 0;
+    }
+
+    // gerer les likes
+
+    function manageLikes(){
+        const likes = document.querySelectorAll(".heart");
+        likes.forEach(event=> event.addEventListener("click",function(){
+            console.log(event.parentElement.innerHTML);
+            const nbrLikes = parseInt(event.parentElement.querySelector(".nbrLikes").innerText);
+            let index = indexOfElement(photos,event.parentElement.parentElement.querySelector(".title").innerText);
+            if(nbrLikes==photos[index].likes){
+                event.innerHTML=`<i class="fa-solid fa-heart"></i>`;
+                event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes+1}`;
+            }else{
+                event.innerHTML=`<i class="fa-regular fa-heart"></i>`;
+                event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes-1}`;
+            }
+        }));
     }
