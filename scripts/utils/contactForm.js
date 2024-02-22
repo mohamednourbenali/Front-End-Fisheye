@@ -21,6 +21,10 @@ btnFermer.addEventListener("click",function(){
     closeModal();
 });
 
+btnFermer.addEventListener("keypress",function(){
+    closeModal();
+});
+
 // affichage du message récupérer depuis le formulaire 
 function gererFormulaire () {
     const prenom = document.getElementById("prenom").value;

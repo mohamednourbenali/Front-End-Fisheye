@@ -21,7 +21,7 @@
     ;
     const photographHeader = document.querySelector(".presentation");
     const photographImage = 
-        `<img src="${searchPhotographer.portrait}" />`
+        `<img src="${searchPhotographer.portrait}" alt="la photo de ${searchPhotographer.name}"/>`
     ;
     photographHeader.innerHTML += description;
     document.querySelector(".portraits").innerHTML+=photographImage;
@@ -30,42 +30,56 @@
     const searchPhotos = result.media;
     const photos = searchPhotos.filter(item => item.photographerId === photographId);
 
-    // Afficher les protrait du photographe
+    // fonction pour créer un élément video 
+    function createVideoElement (media){
+        return `<div class="portrait">
+                    <video controls>
+                        <source src="${media.video}" class="hover-shadow" type="video/mp4">
+                    </video>
+                    <div class="description-likes">
+                        <p class="title">${media.title}</p>
+                        <div class="like">
+                            <p class="nbrLikes">${media.likes}</p>
+                            <div class="heart">
+                                <i class="fa-regular fa-heart dislike"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        
+    }
+    // fonction pour créer un élément image
+    function createImageElement(media){
+        return `<div class="portrait">
+                    <img src="${media.image}" class="hover-shadow" alt="${media.title}" tabindex="0" >
+                    <div class="description-likes">
+                        <p class="title">${media.title}</p>
+                        <div class="like">
+                            <p class="nbrLikes">${media.likes}</p>
+                            <div class="heart">
+                                <i class="fa-regular fa-heart dislike"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+        
+    }
+    // fonction pour créer des éléments (média)
+    function createMediaElement (media){
+        if (media.image ===undefined){
+            return createVideoElement(media);
+        } else if (media.image !==undefined){
+            return createImageElement(media);
+        } else {
+            throw new Error("type de media non prise en charge");
+        }
+    }
+    // Afficher les protrait du photographe 
     function displayWork (liste){
         const photographerWork = document.querySelector(".photographer-work");
         photographerWork.innerHTML="";
         for (let i=0; i<liste.length;i++){
-            if(liste[i].image==undefined){
-                photographerWork.innerHTML+=`
-                <div class="portrait">
-                    <video controls>
-                        <source src="${liste[i].video}" class="hover-shadow" type="video/mp4">
-                    </video>
-                    <div class="description-likes">
-                        <p class="title">${liste[i].title}</p>
-                        <div class="like">
-                            <p class="nbrLikes">${liste[i].likes}</p>
-                            <div class="heart">
-                                <i class="fa-regular fa-heart dislike"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            }else{
-                photographerWork.innerHTML+=`
-                <div class="portrait">
-                    <img src="${liste[i].image}" class="hover-shadow">
-                    <div class="description-likes">
-                        <p class="title">${liste[i].title}</p>
-                        <div class="like">
-                            <p class="nbrLikes">${liste[i].likes}</p>
-                            <div class="heart">
-                                <i class="fa-regular fa-heart dislike"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            }
+            photographerWork.innerHTML+= createMediaElement(liste[i]);    
         }
         clickPhoto();
         manageLikes();
@@ -73,33 +87,63 @@
     displayWork(photos);
 
     // Affichage de l'encart 
-    let nbrlikes = 0;
-    for (let i=0;i<photos.length;i++){
-        nbrlikes += parseInt(photos[i].likes)
+    // la somme des likes 
+    function likesSum () {
+        let nbrLikes = 0;
+        let likes = document.querySelectorAll(".nbrLikes");
+        likes.forEach(element => nbrLikes += parseInt(element.innerHTML));
+        return nbrLikes;
     }
-    let sticker = document.querySelector(".sticker");
-    sticker.innerHTML+="";
-    sticker.innerHTML+= `<div class="content">
-                            <p>${nbrlikes}<i class="fa-solid fa-heart"></i></p>
-                            <p>${searchPhotographer.price}€/jour</p>           
-                        </div>`
-    ;
+    // affichage du total des sommes
+    function displaySum () {
+        return `<div class="content">
+                    <p>${likesSum()}<i class="fa-solid fa-heart"></i></p>
+                    <p>${searchPhotographer.price}€/jour</p>           
+                </div>`
+    }
+    function afficheEncart () {
+        document.querySelector(".sticker").innerHTML= displaySum();
+    }
+    afficheEncart();
 
     // affichage du LightBox
-    function clickPhoto (){
+    function clickPhoto(){
         const photoClick = document.querySelectorAll(".hover-shadow");
         photoClick.forEach(event => event.addEventListener("click",function(){
-            const modalPhoto = document.querySelector(".modal-photo");
-            modalPhoto.style.display="flex";
-            let indexPhoto = indexOfElement(photos,event.parentElement.querySelector(".title").innerHTML);
-            afficherModalPhoto(indexPhoto);
-            const prev = document.querySelector(".prev");
-            prev.addEventListener("click",function(){indexPhoto = previousSlide(indexPhoto);});
-            const next = document.querySelector(".next");
-            next.addEventListener("click",function(){indexPhoto = nextSlide(indexPhoto);});
-            document.querySelector(".close").addEventListener("click",closeLightBox );
+            gererModalPhoto (event);
         }));
+        photoClick.forEach(event => event.addEventListener("keypress",function(){
+            gererModalPhoto (event);
+        }));    
     }
+    
+    function gererModalPhoto (event){
+        let indexPhoto = indexOfElement(photos,event.parentElement.querySelector(".title").innerHTML);
+        openModalPhoto(indexPhoto);
+        gererSwipe(indexPhoto);
+        // fermer Modal
+        document.querySelector(".close").addEventListener("click",closeLightBox );
+        document.querySelector(".close").addEventListener("keypress",closeLightBox );
+    }
+    
+    function openModalPhoto (indexPhoto){
+        const modalPhoto = document.querySelector(".modal-photo");
+        modalPhoto.style.display="flex";       
+        // affichage du photo séléctionner dans un modal
+        afficherModalPhoto(indexPhoto);
+    }
+    
+    function gererSwipe (indexPhoto) {
+        // image précédente
+        const prev = document.querySelector(".prev");
+        prev.addEventListener("click",function(){indexPhoto = previousSlide(indexPhoto);});
+        prev.addEventListener("keypress",function(){indexPhoto = previousSlide(indexPhoto);});
+        // image suivante
+        const next = document.querySelector(".next");
+        next.addEventListener("click",function(){indexPhoto = nextSlide(indexPhoto);});
+        next.addEventListener("keypress",function(){indexPhoto = nextSlide(indexPhoto);});
+    }
+
     // photo précédente 
     function previousSlide (index){
         if((index-1)<0){
@@ -148,22 +192,37 @@
     }
 
     // Trier les portraits 
-    document.querySelector('.select-wrapper').addEventListener('click', function() {
-        this.querySelector('.select').classList.toggle('open');
-    })
-    
+    // navigation souris
+    document.querySelector(".select-wrapper").addEventListener("click", function() {
+        document.querySelector(".select").classList.toggle("open");
+    });
+    // navigation clavier
+    document.querySelector(".select-wrapper").addEventListener("keypress", function(event) {
+        this.querySelector(".select").classList.toggle("open");
+    });
+
     for (const option of document.querySelectorAll(".custom-option")) {
-        option.addEventListener('click', function() {
-            if (!this.classList.contains('selected')) {
-                this.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
-                this.classList.add('selected');
-                this.closest('.select').querySelector('.select__trigger span').textContent = this.textContent;
+        option.addEventListener("click", function() {
+            if (!this.classList.contains("selected")) {
+                this.parentNode.querySelector(".custom-option.selected").classList.remove("selected");
+                this.classList.add("selected");
+                this.closest(".select").querySelector(".select__trigger span").textContent = this.textContent;
             }
             tri(option.innerText);
         });
     }
-
-    // trier les photos selon
+    //navigation clavier
+    for (const option of document.querySelectorAll(".custom-option")) {
+        option.addEventListener("keypress", function() {
+            if (!this.classList.contains("selected")) {
+                this.parentNode.querySelector(".custom-option.selected").classList.remove("selected");
+                this.classList.add("selected");
+                this.closest(".select").querySelector(".select__trigger span").textContent = this.textContent;
+            }
+            tri(option.innerText);
+        }); 
+    }
+    // trier les photos selon popularité, date ou titre
     function tri (chaine){
         let liste = photos;
         switch(chaine){
@@ -220,20 +279,32 @@
         return 0;
     }
 
-    // gerer les likes
+    // gerer les likes 
+    // afficher un like
+    function likeElement (event,nbrLikes) {
+        event.innerHTML=`<i class="fa-solid fa-heart"></i>`;
+        event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes+1}`;
+    }
+    // afficher un dislike
+    function dislikeElement (event,nbrLikes) {
+        event.innerHTML=`<i class="fa-regular fa-heart"></i>`;
+        event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes-1}`;
+    }   
 
-    function manageLikes(){
+    function displayLikes (event) {
+        const nbrLikes = parseInt(event.parentElement.querySelector(".nbrLikes").innerText);
+        let index = indexOfElement(photos,event.parentElement.parentElement.querySelector(".title").innerText);
+        if (nbrLikes==photos[index].likes){
+            likeElement(event,nbrLikes);
+        }else{
+            dislikeElement(event,nbrLikes);
+        }                
+    }
+
+    function manageLikes () {
         const likes = document.querySelectorAll(".heart");
         likes.forEach(event=> event.addEventListener("click",function(){
-            console.log(event.parentElement.innerHTML);
-            const nbrLikes = parseInt(event.parentElement.querySelector(".nbrLikes").innerText);
-            let index = indexOfElement(photos,event.parentElement.parentElement.querySelector(".title").innerText);
-            if(nbrLikes==photos[index].likes){
-                event.innerHTML=`<i class="fa-solid fa-heart"></i>`;
-                event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes+1}`;
-            }else{
-                event.innerHTML=`<i class="fa-regular fa-heart"></i>`;
-                event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes-1}`;
-            }
-        }));
+            displayLikes(event);
+            afficheEncart();
+        }));  
     }
