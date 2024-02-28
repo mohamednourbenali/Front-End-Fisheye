@@ -197,7 +197,7 @@
         document.querySelector(".select").classList.toggle("open");
     });
     // navigation clavier
-    document.querySelector(".select-wrapper").addEventListener("keypress", function(event) {
+    document.querySelector(".select-wrapper").addEventListener("keypress", function() {
         this.querySelector(".select").classList.toggle("open");
     });
 

@@ -3,7 +3,7 @@
     "eslint": "^8.56.0"
   },
   "scripts": {
-    "lint": "eslint *.js"
+    "lint": "eslint scripts/**/*.js"
   },
   "name": "package.json",
   "description": "Rien à installer ici, il suffit d'ouvrir le fichier `index.html`.",
