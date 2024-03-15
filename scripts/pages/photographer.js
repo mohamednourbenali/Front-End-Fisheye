@@ -55,7 +55,7 @@
                     <div class="description-likes">
                         <p class="title">${media.title}</p>
                         <div class="like">
-                            <p class="nbrLikes">${media.likes}</p>
+                            <p class="nbrLikes" aria-label="nombre des likes">${media.likes}</p>
                             <div class="heart">
                                 <i class="fa-regular fa-heart dislike"></i>
                             </div>
@@ -96,7 +96,7 @@
     }
     // affichage du total des sommes
     function displaySum () {
-        return `<div class="content">
+        return `<div class="content" aria-label="prix par jour">
                     <p>${likesSum()}<i class="fa-solid fa-heart"></i></p>
                     <p>${searchPhotographer.price}€/jour</p>           
                 </div>`
@@ -182,7 +182,7 @@
                 <source src="${photos[index].video}" type="video/mp4" />
             </video>`;
         }else{
-            container.innerHTML=`<img src="${photos[index].image}"/>`;
+            container.innerHTML=`<img src="${photos[index].image}" alt="photo de ${photos[index].title}/>`;
         }
         container.innerHTML+=`<figcaption>${photos[index].title}</figcaption>`;
     }
@@ -282,12 +282,12 @@
     // gerer les likes 
     // afficher un like
     function likeElement (event,nbrLikes) {
-        event.innerHTML=`<i class="fa-solid fa-heart"></i>`;
+        event.innerHTML=`<i class="fa-solid fa-heart" aria-label="coeur plein"></i>`;
         event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes+1}`;
     }
     // afficher un dislike
     function dislikeElement (event,nbrLikes) {
-        event.innerHTML=`<i class="fa-regular fa-heart"></i>`;
+        event.innerHTML=`<i class="fa-regular fa-heart" aria-label="coeur vide"></i>`;
         event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes-1}`;
     }   
 

@@ -18,8 +18,8 @@
     </header>
     <main id="main">
       <section class="photograph-header">
-        <div class="presentation"></div>
-        <button class="contact_button">Contactez-moi</button>
+        <div class="presentation" aria-label="Information sur le photographer"></div>
+        <button class="contact_button" aria-label="boutton pour ouvrir le modal de contact">Contactez-moi</button>
         <div class="portraits"></div>
       </section>
       <nav class="trier">
@@ -40,12 +40,12 @@
           </div>
         </div>
       </nav>
-      <section class="photographer-work"></section>
+      <section class="photographer-work" aria-label="affichage des travaux du photographer"></section>
       <article class="modal-photo">
         <span class="close cursor" tabindex="0">&times;</span>
         <figure class="container"></figure>
-        <a class="prev" tabindex="0">&#10094;</a>
-        <a class="next" tabindex="0">&#10095;</a>
+        <a class="prev" tabindex="0" aria-label="image précédente">&#10094;</a>
+        <a class="next" tabindex="0" aria-label="image suivante">&#10095;</a>
       </article>
     </main>
     <dialog id="contact_modal">
@@ -65,10 +65,10 @@
             <label for="message">Votre message</label>
             <input type="text" id="message" name="message" />
 					</div>
-          <button class="envoyer">Envoyer</button>
+          <button class="envoyer" aria-label="boutton pour envoyer le message">Envoyer</button>
 				</form>
 			</div>
 		</dialog>
-    <aside class="sticker"></aside>
+    <aside class="sticker" aria-label="affichage du nombre des likes et le prix par jour"></aside>
   </body>
 </html>
