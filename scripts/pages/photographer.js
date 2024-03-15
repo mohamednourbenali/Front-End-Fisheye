@@ -41,7 +41,7 @@
                         <div class="like">
                             <p class="nbrLikes">${media.likes}</p>
                             <div class="heart">
-                                <i class="fa-regular fa-heart dislike"></i>
+                                <i class="fa-regular fa-heart dislike" tabindex="0"></i>
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                         <div class="like">
                             <p class="nbrLikes" aria-label="nombre des likes">${media.likes}</p>
                             <div class="heart">
-                                <i class="fa-regular fa-heart dislike"></i>
+                                <i class="fa-regular fa-heart dislike" tabindex="0"></i>
                             </div>
                         </div>
                     </div>
@@ -282,12 +282,12 @@
     // gerer les likes 
     // afficher un like
     function likeElement (event,nbrLikes) {
-        event.innerHTML=`<i class="fa-solid fa-heart" aria-label="coeur plein"></i>`;
+        event.innerHTML=`<i class="fa-solid fa-heart" tabindex="0" aria-label="coeur plein"></i>`;
         event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes+1}`;
     }
     // afficher un dislike
     function dislikeElement (event,nbrLikes) {
-        event.innerHTML=`<i class="fa-regular fa-heart" aria-label="coeur vide"></i>`;
+        event.innerHTML=`<i class="fa-regular fa-heart" tabindex="0" aria-label="coeur vide"></i>`;
         event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes-1}`;
     }   
 
@@ -307,4 +307,8 @@
             displayLikes(event);
             afficheEncart();
         }));  
+        likes.forEach(event=> event.addEventListener("keypress",function(){
+            displayLikes(event);
+            afficheEncart();
+        })); 
     }
