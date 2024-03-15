@@ -32,7 +32,7 @@
 
     // fonction pour créer un élément video 
     function createVideoElement (media){
-        return `<div class="portrait">
+        return `<figure class="portrait">
                     <video controls>
                         <source src="${media.video}" class="hover-shadow" type="video/mp4">
                     </video>
@@ -45,12 +45,12 @@
                             </div>
                         </div>
                     </div>
-                </div>`;
+                </figure>`;
         
     }
     // fonction pour créer un élément image
     function createImageElement(media){
-        return `<div class="portrait">
+        return `<figure class="portrait">
                     <img src="${media.image}" class="hover-shadow" alt="${media.title}" tabindex="0" >
                     <div class="description-likes">
                         <p class="title">${media.title}</p>
@@ -61,7 +61,7 @@
                             </div>
                         </div>
                     </div>
-                </div>`
+                </figure>`
         
     }
     // fonction pour créer des éléments (média)
@@ -184,7 +184,7 @@
         }else{
             container.innerHTML=`<img src="${photos[index].image}"/>`;
         }
-        container.innerHTML+=`<p>${photos[index].title}</p>`;
+        container.innerHTML+=`<figcaption>${photos[index].title}</figcaption>`;
     }
     // fermer le lightbox
     function closeLightBox (){

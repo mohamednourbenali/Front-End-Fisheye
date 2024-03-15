@@ -35,7 +35,7 @@ function gererFormulaire () {
 }
 
 const submit = document.querySelector(".envoyer");
-submit.     addEventListener("click",function(event){
+submit.addEventListener("click",function(event){
     event.preventDefault();
     gererFormulaire();
     closeModal();
