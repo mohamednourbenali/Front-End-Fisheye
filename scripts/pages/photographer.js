@@ -29,41 +29,64 @@
     // récupérer les portrait du photographe
     const searchPhotos = result.media;
     const photos = searchPhotos.filter(item => item.photographerId === photographId);
+    photos.forEach(function(photo){
+        photo.liked = false;
+    });
 
     // fonction pour créer un élément video 
     function createVideoElement (media){
-        return `<figure class="portrait">
+        let video = `<figure class="portrait">
                     <video controls>
                         <source src="${media.video}" class="hover-shadow" type="video/mp4">
                     </video>
                     <div class="description-likes">
                         <p class="title">${media.title}</p>
-                        <div class="like">
-                            <p class="nbrLikes">${media.likes}</p>
-                            <div class="heart">
-                                <i class="fa-regular fa-heart dislike" tabindex="0"></i>
-                            </div>
-                        </div>
-                    </div>
-                </figure>`;
+                    `;
+        video += createMediaLikes(media)
+        return video;
         
     }
     // fonction pour créer un élément image
     function createImageElement(media){
-        return `<figure class="portrait">
-                    <img src="${media.image}" class="hover-shadow" alt="${media.title}" tabindex="0" >
-                    <div class="description-likes">
-                        <p class="title">${media.title}</p>
-                        <div class="like">
-                            <p class="nbrLikes" aria-label="nombre des likes">${media.likes}</p>
-                            <div class="heart">
-                                <i class="fa-regular fa-heart dislike" tabindex="0"></i>
-                            </div>
-                        </div>
-                    </div>
-                </figure>`
+        let image = `<figure class="portrait">
+                        <img src="${media.image}" class="hover-shadow" alt="${media.title}" tabindex="0" >
+                        <div class="description-likes">
+                            <p class="title">${media.title}</p>
+                        `
+        image += createMediaLikes(media);
+        return image;
         
     }
+
+    function createDislikeElement (media){
+        return `<div class="like">
+                    <p class="nbrLikes" aria-label="nombre des likes">${media.likes}</p>
+                    <div class="heart">
+                        <i class="fa-regular fa-heart dislike" tabindex="0"></i>
+                    </div>
+                </div>
+                </div>
+                </figure>`
+    }
+
+    function createLikeElement (media){
+        return `<div class="like">
+                    <p class="nbrLikes" aria-label="nombre des likes">${media.likes}</p>
+                    <div class="heart">
+                        <i class="fa-solid fa-heart dislike" tabindex="0"></i>
+                    </div>
+                </div>
+                </div>
+                </figure>`
+    }
+    function createMediaLikes(media){
+        if (media.liked){
+            return createLikeElement(media);
+        }else{
+            return createDislikeElement(media);
+        }
+    }
+
     // fonction pour créer des éléments (média)
     function createMediaElement (media){
         if (media.image ===undefined){
@@ -77,9 +100,9 @@
     // Afficher les protrait du photographe 
     function displayWork (liste){
         const photographerWork = document.querySelector(".photographer-work");
-        photographerWork.innerHTML="";
+        photographerWork.innerHTML=""
         for (let i=0; i<liste.length;i++){
-            photographerWork.innerHTML+= createMediaElement(liste[i]);    
+            photographerWork.innerHTML+= createMediaElement(liste[i]);
         }
         clickPhoto();
         manageLikes();
@@ -179,10 +202,10 @@
         if((photos[index].image)==undefined){
             container.innerHTML=`
             <video controls>
-                <source src="${photos[index].video}" type="video/mp4" />
+                <source src="${photos[index].video}" type="video/mp4" alt="video de ${photos[index].title}"/>
             </video>`;
         }else{
-            container.innerHTML=`<img src="${photos[index].image}" alt="photo de ${photos[index].title}/>`;
+            container.innerHTML=`<img src="${photos[index].image}" alt="photo de ${photos[index].title}"/>`;
         }
         container.innerHTML+=`<figcaption>${photos[index].title}</figcaption>`;
     }
@@ -280,35 +303,29 @@
     }
 
     // gerer les likes 
-    // afficher un like
-    function likeElement (event,nbrLikes) {
-        event.innerHTML=`<i class="fa-solid fa-heart" tabindex="0" aria-label="coeur plein"></i>`;
-        event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes+1}`;
-    }
-    // afficher un dislike
-    function dislikeElement (event,nbrLikes) {
-        event.innerHTML=`<i class="fa-regular fa-heart" tabindex="0" aria-label="coeur vide"></i>`;
-        event.parentElement.querySelector(".nbrLikes").innerText=`${nbrLikes-1}`;
-    }   
-
     function displayLikes (event) {
-        const nbrLikes = parseInt(event.parentElement.querySelector(".nbrLikes").innerText);
-        let index = indexOfElement(photos,event.parentElement.parentElement.querySelector(".title").innerText);
-        if (nbrLikes==photos[index].likes){
-            likeElement(event,nbrLikes);
+        let index = indexOfElement(photos,event.parentElement.parentElement.querySelector(".title").innerText); 
+        if (photos[index].liked){
+            photos[index].liked = false;
+            photos[index].likes -= 1;
         }else{
-            dislikeElement(event,nbrLikes);
-        }                
+            photos[index].liked = true;
+            photos[index].likes += 1;
+        }
     }
 
     function manageLikes () {
         const likes = document.querySelectorAll(".heart");
         likes.forEach(event=> event.addEventListener("click",function(){
             displayLikes(event);
+            displayWork(photos);
             afficheEncart();
         }));  
         likes.forEach(event=> event.addEventListener("keypress",function(){
             displayLikes(event);
+            displayWork(photos)
             afficheEncart();
         })); 
     }
+
+   

@@ -104,7 +104,7 @@
     height: 80%;
     object-fit: fill;
 }
-.container p{
+figcaption{
     color: #901C1C;
     font-size: 24px;
 }
