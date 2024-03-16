@@ -33,76 +33,15 @@
         photo.liked = false;
     });
 
-    // fonction pour créer un élément video 
-    function createVideoElement (media){
-        let video = `<figure class="portrait">
-                    <video controls>
-                        <source src="${media.video}" class="hover-shadow" type="video/mp4">
-                    </video>
-                    <div class="description-likes">
-                        <p class="title">${media.title}</p>
-                    `;
-        video += createMediaLikes(media)
-        return video;
-        
-    }
-    // fonction pour créer un élément image
-    function createImageElement(media){
-        let image = `<figure class="portrait">
-                        <img src="${media.image}" class="hover-shadow" alt="${media.title}" tabindex="0" >
-                        <div class="description-likes">
-                            <p class="title">${media.title}</p>
-                        `
-        image += createMediaLikes(media);
-        return image;
-        
-    }
-
-    function createDislikeElement (media){
-        return `<div class="like">
-                    <p class="nbrLikes" aria-label="nombre des likes">${media.likes}</p>
-                    <div class="heart">
-                        <i class="fa-regular fa-heart dislike" tabindex="0"></i>
-                    </div>
-                </div>
-                </div>
-                </figure>`
-    }
-
-    function createLikeElement (media){
-        return `<div class="like">
-                    <p class="nbrLikes" aria-label="nombre des likes">${media.likes}</p>
-                    <div class="heart">
-                        <i class="fa-solid fa-heart dislike" tabindex="0"></i>
-                    </div>
-                </div>
-                </div>
-                </figure>`
-    }
-    function createMediaLikes(media){
-        if (media.liked){
-            return createLikeElement(media);
-        }else{
-            return createDislikeElement(media);
-        }
-    }
-
-    // fonction pour créer des éléments (média)
-    function createMediaElement (media){
-        if (media.image ===undefined){
-            return createVideoElement(media);
-        } else if (media.image !==undefined){
-            return createImageElement(media);
-        } else {
-            throw new Error("type de media non prise en charge");
-        }
-    }
+    import photographerMedia from "../templates/media.js";
     // Afficher les protrait du photographe 
     function displayWork (liste){
         const photographerWork = document.querySelector(".photographer-work");
         photographerWork.innerHTML=""
         for (let i=0; i<liste.length;i++){
-            photographerWork.innerHTML+= createMediaElement(liste[i]);
+            const workModel = photographerMedia(liste[i]);
+            const workCard = workModel.createMediaElement();
+            photographerWork.innerHTML+= workCard;
         }
         clickPhoto();
         manageLikes();
