@@ -6,10 +6,9 @@ function photographerTemplate(data) {
 
     function getUserCardDOM() {
         const article = document.createElement( 'article' );
+        article.classList.add("article");
         article.innerHTML += `
-        <div class="image-photographe">
-            <a href="./photographer.html?photographeId=${id}"><img src="${portrait}" alt="la photo de ${name}"/></a>
-        </div>
+        <a href="./photographer.html?photographeId=${id}"><img src="${portrait}" alt="la photo de ${name}"/></a>
         <h2>${name}</h2>
         <p class="country"> ${city}, ${country}</p>
         <p class="tagline"> ${tagline}</p>

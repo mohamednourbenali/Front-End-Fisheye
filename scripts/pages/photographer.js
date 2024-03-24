@@ -17,7 +17,7 @@
     const description = 
         `<h1>${searchPhotographer.name}</h1>
         <p class="city">${searchPhotographer.city}, ${searchPhotographer.country}</p>
-        <p>${searchPhotographer.tagline}</p>`
+        <p class="tagline-header">${searchPhotographer.tagline}</p>`
     ;
     const photographHeader = document.querySelector(".presentation");
     const photographImage = 
